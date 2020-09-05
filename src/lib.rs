@@ -22,7 +22,7 @@ pub struct Config<'a> {
     replace: Option<&'a str>,
 }
 
-fn scaffold() -> Result<()> {
+pub fn scaffold() -> Result<()> {
     let config: String = fs::read_to_string(SCAFFEX_FILE)?;
     let config: Config = toml::from_str(&config)?;
     let src_file = File::open(config.src)?;

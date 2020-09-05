@@ -1,5 +1,5 @@
 # Replace removed code with the following
-# replace = ""
+replace = ""
 
 # Exclude paths you don't want copied to the generated boilerplate
 exclude = []

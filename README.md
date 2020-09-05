@@ -15,14 +15,14 @@ Given a path to a solution file or directory, `scaffex` will generate copies
 of the solution files modulo any blocks of code delimited by a `START` and `END`
 delimiter.
 
-For example, given the following with `//#//Start` and `//#//End` as the `START` and
-`END` delimiters respectively, the following
+For example, given the following with `//Start` and `//End` as the `START` and
+`END` delimiters respectively, the following reference implementation
 ```rust
 // example.rs
 pub fn solution_implementation(s: String) -> bool {
-    //#//Start
+    //Start
     s == "the answer"
-    //#//End 
+    //End 
 }
 ```
 will generate:
@@ -38,8 +38,8 @@ pub fn solution_implementation(s: String) -> bool {
 `scaffex` reads in config data from a `.scaffex.toml` file, which must be present
 in your project directory. Parameters that can be configured include:
 
-- `START` and `END` delimiters
-- Path to the solution/example files
+- `START` and `END` delimiters; __**each delimiter must reside on its own line**__
+- Path to the solution/reference files
 - Path where the generated boilerplate will go
 - Optional comments/code snippets to replace removed code
 - Optional files from the input directory that you want excluded from the generated 
@@ -55,26 +55,17 @@ exclude = [
     ".meta/dont_include_me.md"
 ]
 
-[parameters]
-    [parameters.start]
-    type = "string"
-    message = "Specify the `START` delimiter"
-    default = "//#//Start"
-    
-    [parameters.end]
-    type = "string"
-    message = "Specify the `END` delimiter"
-    default = "//#//End"
-    
-    [parameters.src]
-    type = "string"
-    message = "Specify the location of the source file/directory"
-    default = ".meta/example.rs"
-    
-    [parameters.dest]
-    type = "string"
-    message = "Specify the location of the destination file/directory"
-    default = "src/lib.rs"
+# The `START` delimiter
+start = "//Start"
+
+# The `END` delimiter
+end = "//End"
+
+# Path to the source file/directory
+src = "test/reference.rs"
+
+# Path where the scaffolded file/directory will live
+dest = "test/lib.rs"
 ```
 
 ## Progress
