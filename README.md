@@ -1,6 +1,6 @@
 # Scaffex 
 
-A language-agnostic utility to *scaff*old *ex*ercise boilerplate files from
+A language-agnostic utility to **scaff**old **ex**ercise boilerplate files from
 solution files. Handy for keeping instructor reference implementations and 
 student-facing exercise files in sync.
 
