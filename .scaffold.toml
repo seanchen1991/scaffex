@@ -1,0 +1,26 @@
+# Replace removed code with the following
+replace = ""
+
+# Exclude paths you don't want copied to the generated boilerplate
+exclude = []
+
+[parameters]
+    [parameters.start]
+    type = "string"
+    message = "Specify the `START` delimiter"
+    default = "//#//Start"
+    
+    [parameters.end]
+    type = "string"
+    message = "Specify the `END` delimiter"
+    default = "//#//End"
+    
+    [parameters.src]
+    type = "string"
+    message = "Specify the location of the source file/directory"
+    default = ".meta/example.rs"
+    
+    [parameters.dest]
+    type = "string"
+    message = "Specify the location of the destination file/directory"
+    default = "src/lib.rs"

@@ -1,0 +1,22 @@
+[package]
+name = "cargo-boilex"
+version = "0.1.0"
+authors = ["seanchen <seanchen11235@gmail.com>"]
+edition = "2018"
+description = "A tool for scaffolding exercise boilerplate files from solution files."
+license-file = "LICENSE"
+readme = "README.md"
+repository = "https://gitub.com/seanchen1991/cargo-boilex"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.32"
+clap = "2.33.3"
+toml = "0.5.6"
+serde = { version = "1.0.115", features = ["derive"] }
+walkdir = "2.3.1"
+
+[[bin]]
+path = "src/main.rs"
+name = "cargo-boilex"
