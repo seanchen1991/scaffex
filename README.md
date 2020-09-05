@@ -35,8 +35,8 @@ pub fn solution_implementation(s: String) -> bool {
 
 ## Usage
 
-`scaffex` reads in config data from a `.scaffex.toml` file. Parameters that can
-be configured include:
+`scaffex` reads in config data from a `.scaffex.toml` file, which must be present
+in your project directory. Parameters that can be configured include:
 
 - `START` and `END` delimiters
 - Path to the solution/example files
