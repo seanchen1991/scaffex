@@ -11,8 +11,9 @@ start = "//Start"
 end = "//End"
 
 # Path to the source file/directory
-src = ".meta/example.rs"
+src = "test/example.rs"
+# src = "test/example.py"
 
 # Path where the scaffolded file/directory will live
-dest = "src/lib.rs"
+dest = "test/lib.rs"
 

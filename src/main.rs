@@ -1,5 +1,6 @@
 use anyhow::Result;
-use std::fs;
+use std::fs::{self, File};
+use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
 use serde::Deserialize;
 
@@ -14,7 +15,7 @@ pub struct Config<'a> {
     /// source path
     src: &'a Path,
     /// destination path
-    dest: Option<&'a Path>,
+    dest: &'a Path,
     /// excluded paths
     exclude: Vec<&'a Path>,
     /// replacement text
@@ -22,10 +23,22 @@ pub struct Config<'a> {
 }
 
 fn main() -> Result<()> {
-    let contents: String = fs::read_to_string(SCAFFEX_FILE)?;
-    let config: Config = toml::from_str(&contents)?;
-    
-    println!("config: {:?}", config);
+    let mut buffer = String::new();
+    let config: String = fs::read_to_string(SCAFFEX_FILE)?;
+    let config: Config = toml::from_str(&config)?;
+    let src_file = File::open(config.src)?;
+    let lines = BufReader::new(src_file).lines();
+
+    for line in lines {
+        let line = line.unwrap();
+
+        if !line.contains("//Start") {
+            buffer.push_str(format!("{}\n", line).as_str());
+        }
+    }
+
+    let mut dest_file = File::create(config.dest)?;
+    dest_file.write_all(buffer.as_bytes())?;
     
     Ok(())
 }
