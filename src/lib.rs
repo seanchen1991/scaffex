@@ -38,19 +38,23 @@ pub fn scaffold() -> Result<()> {
 fn generate(src: File, config: &Config) -> String {
     let mut discard = false;
     let mut buffer = String::new();
+    let mut offset: usize = 0; 
 
     for line in BufReader::new(src).lines() {
         let line = line.unwrap(); 
         
         if line.contains(config.start) {
+            offset = line.chars().take_while(|c| c.is_whitespace()).count(); 
             discard = true;
             continue;
         } else if line.contains(config.end) {
             if let Some(replace) = config.replace {
-                buffer.push_str(format!("{}\n", replace).as_str()); 
+               buffer.push_str(&" ".repeat(offset).as_str()); 
+               buffer.push_str(format!("{}\n", replace).as_str()); 
             } else {
                 buffer.push('\n');
             }
+            
             discard = false;
             continue;
         }
