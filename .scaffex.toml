@@ -1,22 +1,22 @@
 # Replace removed code with the following
-replace = ""
+replace = "unimplemented!()"
 
 # Exclude paths you don't want copied to the generated boilerplate
 exclude = []
 
 # The `START` delimiter
-# start = "//Start"
-start = "#Start"
+start = "//Start"
+# start = "#Start"
 
 # The `END` delimiter
-# end = "//End"
-end = "#End"
+end = "//End"
+# end = "#End"
 
 # Path to the source file/directory
-# src = "test/example.rs"
-src = "test/example.py"
+src = "test/example.rs"
+# src = "test/example.py"
 
 # Path where the scaffolded file/directory will live
-# dest = "test/lib.rs"
-dest = "test/ex1.py"
+dest = "test/lib.rs"
+# dest = "test/ex1.py"
 

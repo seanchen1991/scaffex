@@ -27,18 +27,30 @@ pub fn scaffold() -> Result<()> {
     let config: Config = toml::from_str(&config)?;
     let src_file = File::open(config.src)?;
 
+    let generated = generate(src_file, &config);
+
+    let mut dest_file = File::create(config.dest)?;
+    dest_file.write_all(generated.as_bytes())?;
+    
+    Ok(())
+}
+
+fn generate(src: File, config: &Config) -> String {
     let mut discard = false;
     let mut buffer = String::new();
-    
-    for line in BufReader::new(src_file).lines() {
+
+    for line in BufReader::new(src).lines() {
         let line = line.unwrap(); 
         
         if line.contains(config.start) {
             discard = true;
             continue;
         } else if line.contains(config.end) {
-            // TODO: push replacement text to the buffer
-            buffer.push('\n');
+            if let Some(replace) = config.replace {
+                buffer.push_str(format!("{}\n", replace).as_str()); 
+            } else {
+                buffer.push('\n');
+            }
             discard = false;
             continue;
         }
@@ -48,8 +60,5 @@ pub fn scaffold() -> Result<()> {
         }
     }
 
-    let mut dest_file = File::create(config.dest)?;
-    dest_file.write_all(buffer.as_bytes())?;
-    
-    Ok(())
+    buffer
 }
