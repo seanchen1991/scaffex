@@ -35,6 +35,10 @@ pub fn scaffold() -> Result<()> {
     Ok(())
 }
 
+// Pull in Ropey to back the source file 
+// Iterate over rope chunks
+// Find all `START` and `END` delimiters, storing their indices
+// Replace the sections of code with the replacement text
 fn generate(src: File, config: &Config) -> String {
     let mut discard = false;
     let mut buffer = String::new();
