@@ -1,8 +1,11 @@
+#![feature(split_inclusive)]
+
 use anyhow::Result;
-use std::fs::{self, File};
-use std::io::{BufRead, BufReader, Write};
-use std::path::Path;
+use ropey::{self, Rope};
 use serde::Deserialize;
+use std::fs::{self, File};
+use std::io::{BufRead, BufReader, BufWriter};
+use std::path::Path;
 
 const SCAFFEX_FILE: &str = ".scaffex.toml";
 
@@ -25,48 +28,58 @@ pub struct Config<'a> {
 pub fn scaffold() -> Result<()> {
     let config: String = fs::read_to_string(SCAFFEX_FILE)?;
     let config: Config = toml::from_str(&config)?;
-    let src_file = File::open(config.src)?;
-
-    let generated = generate(src_file, &config);
-
-    let mut dest_file = File::create(config.dest)?;
-    dest_file.write_all(generated.as_bytes())?;
+    let src = File::open(config.src)?;
+    let mut dest_file = ropey::Rope::from_reader(
+        File::open(config.src)?
+    )?;
+    
+    let delimiters = find_delimiters(src, &config);
+    replace_text(&mut dest_file, delimiters, &config);
+    
+    dest_file.write_to(
+        BufWriter::new(File::create(config.dest)?)
+    )?;
     
     Ok(())
 }
 
-// Pull in Ropey to back the source file 
-// Iterate over rope chunks
-// Find all `START` and `END` delimiters, storing their indices
-// Replace the sections of code with the replacement text
-fn generate(src: File, config: &Config) -> String {
-    let mut discard = false;
-    let mut buffer = String::new();
-    let mut offset: usize = 0; 
+fn replace_text(dest: &mut Rope, delimiters: Vec<(usize, usize)>, config: &Config) {
+    for (start, end) in delimiters.into_iter() {
+        dest.remove(start..end);
+
+        if let Some(replace_with) = config.replace {
+            dest.insert(start, replace_with);
+        } else {
+            dest.insert(start, "\n");
+        }
+    } 
+}
+
+fn find_delimiters(src: File, config: &Config) -> Vec<(usize, usize)>{
+    // Find all `START` and `END` delimiters, storing their indices
+    let mut start_positions: Vec<usize> = vec![];
+    let mut end_positions: Vec<usize> = vec![];
+    let mut total_chars: usize = 0;
 
     for line in BufReader::new(src).lines() {
-        let line = line.unwrap(); 
-        
-        if line.contains(config.start) {
-            offset = line.chars().take_while(|c| c.is_whitespace()).count(); 
-            discard = true;
-            continue;
-        } else if line.contains(config.end) {
-            if let Some(replace) = config.replace {
-               buffer.push_str(&" ".repeat(offset).as_str()); 
-               buffer.push_str(format!("{}\n", replace).as_str()); 
-            } else {
-                buffer.push('\n');
+        let line = line.unwrap();
+        let mut token_pos: usize = 0;
+
+        for token in line.split_inclusive(' ') {
+            if token.starts_with(config.start) {
+               start_positions.push(total_chars + token_pos);
+            } else if token.starts_with(config.end) {
+                println!("Config End Length: {}", config.end.len());
+                end_positions.push(total_chars + token_pos + config.end.len());
             }
-            
-            discard = false;
-            continue;
+
+            token_pos += token.len();
         }
 
-        if !discard {
-            buffer.push_str(format!("{}\n", line).as_str());
-        }
+        total_chars += line.len();
     }
 
-    buffer
+    start_positions.iter().zip(end_positions.iter())
+        .map(|(s, e)| (*s, *e))
+        .collect()
 }

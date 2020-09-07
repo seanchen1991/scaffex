@@ -13,8 +13,8 @@ repository = "https://gitub.com/seanchen1991/scaffex"
 [dependencies]
 anyhow = "1.0.32"
 toml = "0.5.6"
+ropey = "1.2.0"
 serde = { version = "1.0.115", features = ["derive"] }
-walkdir = "2.3.1"
 
 [[bin]]
 path = "src/main.rs"
